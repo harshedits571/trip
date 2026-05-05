@@ -1,0 +1,6 @@
+{
+  "name": "Trip Planner Hub",
+  "description": "A collaborative trip itinerary and schedule manager for friends to view train schedules, locations, and mark activities as completed.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

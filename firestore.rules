@@ -1,0 +1,184 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidTrip(data) {
+      return data.keys().hasAll(['title', 'description', 'managerId', 'startDate', 'endDate', 'createdAt', 'updatedAt']) &&
+             data.keys().size() == 7 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.description is string && data.description.size() <= 1000 &&
+             data.managerId is string && data.managerId == request.auth.uid &&
+             data.startDate is string && data.startDate.size() <= 50 &&
+             data.endDate is string && data.endDate.size() <= 50;
+    }
+
+    function isValidEvent(data) {
+      let coreKeys = data.keys().hasAll(['title', 'type', 'startTime', 'endTime', 'locationName', 'locationUrl', 'notes', 'status', 'date', 'createdAt', 'updatedAt']);
+      let sizeValid = data.keys().size() >= 11 && data.keys().size() <= 14;
+      
+      let titleValid = data.title is string && data.title.size() > 0 && data.title.size() <= 200;
+      let typeValid = data.type is string && (data.type == 'travel' || data.type == 'activity' || data.type == 'food' || data.type == 'accommodation');
+      let statusValid = data.status is string && (data.status == 'pending' || data.status == 'completed');
+      
+      let destNameValid = !('destinationName' in data) || (data.destinationName is string && data.destinationName.size() <= 200);
+      let destUrlValid = !('destinationUrl' in data) || (data.destinationUrl is string && data.destinationUrl.size() <= 500);
+      let endDateValid = !('endDate' in data) || (data.endDate is string && data.endDate.size() <= 50);
+
+      return coreKeys && sizeValid && titleValid && typeValid && statusValid && destNameValid && destUrlValid && endDateValid &&
+             data.startTime is string && data.startTime.size() <= 50 &&
+             data.endTime is string && data.endTime.size() <= 50 &&
+             data.locationName is string && data.locationName.size() <= 200 &&
+             data.locationUrl is string && data.locationUrl.size() <= 500 &&
+             data.notes is string && data.notes.size() <= 1000 &&
+             data.date is string && data.date.size() > 0 && data.date.size() <= 50;
+    }
+
+    function isValidExpense(data) {
+      return data.keys().hasAll(['title', 'amount', 'category', 'date', 'createdAt', 'updatedAt']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+             data.amount is number &&
+             data.category is string && (data.category == 'transport' || data.category == 'accommodation' || data.category == 'food' || data.category == 'activity' || data.category == 'other') &&
+             data.date is string && data.date.size() <= 50 &&
+             (!('eventId' in data.keys()) || (data.eventId is string && data.eventId.size() <= 128));
+    }
+
+    function isValidPackingItem(data) {
+      return data.keys().hasAll(['name', 'isPacked', 'createdAt', 'updatedAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+             data.isPacked is bool &&
+             (!('isShared' in data) || data.isShared is bool) &&
+             (!('ownerId' in data) || (data.ownerId is string && data.ownerId.size() <= 128));
+    }
+
+    match /trips/{tripId} {
+      allow get: if isValidId(tripId);
+      allow list: if isSignedIn() && existing().managerId == request.auth.uid;
+      
+      allow create: if isSignedIn() &&
+                    isValidId(tripId) &&
+                    isValidTrip(incoming()) &&
+                    incoming().createdAt == request.time &&
+                    incoming().updatedAt == request.time;
+                    
+      allow update: if isSignedIn() &&
+                    isValidId(tripId) &&
+                    existing().managerId == request.auth.uid &&
+                    isValidTrip(incoming()) &&
+                    incoming().managerId == existing().managerId &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().updatedAt == request.time &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'startDate', 'endDate', 'updatedAt']);
+                    
+      allow delete: if isSignedIn() &&
+                    isValidId(tripId) &&
+                    existing().managerId == request.auth.uid;
+
+      match /events/{eventId} {
+        function isTripManager() {
+          return get(/databases/$(database)/documents/trips/$(tripId)).data.managerId == request.auth.uid;
+        }
+
+        allow get: if isValidId(tripId) && isValidId(eventId);
+        allow list: if isValidId(tripId);
+
+        allow create: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(eventId) &&
+                      isTripManager() &&
+                      isValidEvent(incoming()) &&
+                      incoming().createdAt == request.time &&
+                      incoming().updatedAt == request.time;
+                      
+        allow update: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(eventId) &&
+                      isTripManager() &&
+                      isValidEvent(incoming()) &&
+                      incoming().createdAt == existing().createdAt &&
+                      incoming().updatedAt == request.time &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['title', 'type', 'startTime', 'endTime', 'locationName', 'locationUrl', 'notes', 'status', 'date', 'endDate', 'destinationName', 'destinationUrl', 'updatedAt']);
+                      
+        allow delete: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(eventId) &&
+                      isTripManager();
+      }
+
+      match /expenses/{expenseId} {
+        allow get: if isValidId(tripId) && isValidId(expenseId);
+        allow list: if isValidId(tripId);
+
+        allow create: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(expenseId) &&
+                      get(/databases/$(database)/documents/trips/$(tripId)).data.managerId == request.auth.uid &&
+                      isValidExpense(incoming()) &&
+                      incoming().createdAt == request.time &&
+                      incoming().updatedAt == request.time;
+                      
+        allow update: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(expenseId) &&
+                      get(/databases/$(database)/documents/trips/$(tripId)).data.managerId == request.auth.uid &&
+                      isValidExpense(incoming()) &&
+                      incoming().createdAt == existing().createdAt &&
+                      incoming().updatedAt == request.time &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['title', 'amount', 'category', 'date', 'eventId', 'updatedAt']);
+                      
+        allow delete: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(expenseId) &&
+                      get(/databases/$(database)/documents/trips/$(tripId)).data.managerId == request.auth.uid;
+      }
+
+      match /packingItems/{itemId} {
+        allow get: if isValidId(tripId) && isValidId(itemId) && (resource.data.isShared == true || resource.data.ownerId == request.auth.uid);
+        allow list: if isValidId(tripId) && (resource.data.isShared == true || resource.data.ownerId == request.auth.uid);
+
+        allow create: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(itemId) &&
+                      isValidPackingItem(incoming()) &&
+                      incoming().ownerId == request.auth.uid &&
+                      (incoming().isShared == false || get(/databases/$(database)/documents/trips/$(tripId)).data.managerId == request.auth.uid) &&
+                      incoming().createdAt == request.time &&
+                      incoming().updatedAt == request.time;
+                      
+        allow update: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(itemId) &&
+                      isValidPackingItem(incoming()) &&
+                      incoming().get('ownerId', '') == existing().get('ownerId', '') &&
+                      incoming().get('isShared', false) == existing().get('isShared', false) &&
+                      incoming().createdAt == existing().createdAt &&
+                      incoming().updatedAt == request.time &&
+                      incoming().diff(existing()).affectedKeys().hasOnly(['name', 'isPacked', 'updatedAt']) &&
+                      (existing().get('isShared', false) == true || existing().get('ownerId', '') == request.auth.uid);
+                      
+        allow delete: if isSignedIn() &&
+                      isValidId(tripId) &&
+                      isValidId(itemId) &&
+                      (existing().get('ownerId', '') == request.auth.uid || get(/databases/$(database)/documents/trips/$(tripId)).data.managerId == request.auth.uid);
+      }
+    }
+  }
+}
