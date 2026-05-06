@@ -1,0 +1,88 @@
+{
+  "entities": {
+    "Trip": {
+      "title": "Trip",
+      "description": "A trip plan.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string", "maxLength": 1000 },
+        "managerId": { "type": "string" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["title", "managerId", "createdAt", "updatedAt"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "An event in a trip.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string", "enum": ["travel", "activity", "food", "accommodation"] },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "locationName": { "type": "string" },
+        "locationUrl": { "type": "string" },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["pending", "completed"] },
+        "date": { "type": "string" },
+        "endDate": { "type": "string" },
+        "destinationName": { "type": "string" },
+        "destinationUrl": { "type": "string" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["title", "type", "date", "status", "createdAt", "updatedAt"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "An expense item for a trip.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "amount": { "type": "number" },
+        "category": { "type": "string", "enum": ["transport", "accommodation", "food", "activity", "other"] },
+        "date": { "type": "string" },
+        "eventId": { "type": "string" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["title", "amount", "category", "date", "createdAt", "updatedAt"]
+    },
+    "PackingItem": {
+      "title": "PackingItem",
+      "description": "A packing checklist item for a trip.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "isPacked": { "type": "boolean" },
+        "isShared": { "type": "boolean" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["name", "isPacked", "isShared", "ownerId", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/trips/{tripId}": {
+      "schema": { "$ref": "#/entities/Trip" },
+      "description": "Stores all trips created by users."
+    },
+    "/trips/{tripId}/events/{eventId}": {
+      "schema": { "$ref": "#/entities/Event" },
+      "description": "Stores events for a specific trip."
+    },
+    "/trips/{tripId}/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Stores expenses for a specific trip."
+    },
+    "/trips/{tripId}/packingItems/{itemId}": {
+      "schema": { "$ref": "#/entities/PackingItem" },
+      "description": "Stores packing items for a specific trip."
+    }
+  }
+}
