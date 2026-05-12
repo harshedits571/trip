@@ -29,7 +29,7 @@ const CATEGORY_ICONS = {
   other: MoreHorizontal,
 };
 
-export default function TripExpenses({ tripId, isManager, expenses, setExpenses }: TripExpensesProps) {
+export default function TripExpenses({ tripId, isManager, expenses, setExpenses, members, updateMembers }: TripExpensesProps) {
   const [isAdding, setIsAdding] = useState(false);
 
   // Form
