@@ -64,7 +64,8 @@ export default function Home() {
       title: newTitle,
       description: newDesc,
       startDate: '',
-      endDate: ''
+      endDate: '',
+      members: ['You']
     }, GLOBAL_TRIP_ID);
     
     if (id) {
@@ -301,7 +302,20 @@ export default function Home() {
             </div>
           ) : viewMode === 'expenses' ? (
             <div className="mb-12">
-              <TripExpenses tripId={GLOBAL_TRIP_ID} isManager={isManager} expenses={expenses} setExpenses={setExpenses} />
+              <TripExpenses 
+                tripId={GLOBAL_TRIP_ID} 
+                isManager={!!isManager} 
+                expenses={expenses} 
+                setExpenses={setExpenses}
+                members={trip?.members || ['You']}
+                updateMembers={async (newMembers) => {
+                  if (trip) {
+                    const updatedTrip = { ...trip, members: newMembers };
+                    setTrip(updatedTrip);
+                    await createTrip(updatedTrip as any, GLOBAL_TRIP_ID);
+                  }
+                }}
+              />
             </div>
           ) : viewMode === 'calendar' ? (
             <div className="mb-12">

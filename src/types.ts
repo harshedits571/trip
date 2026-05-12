@@ -5,6 +5,7 @@ export interface Trip {
   managerId: string;
   startDate: string;
   endDate: string;
+  members: string[]; // List of member names for the trip
   createdAt: any;
   updatedAt: any;
 }
@@ -19,6 +20,8 @@ export interface TripExpense {
   amount: number;
   category: ExpenseCategory;
   date: string;
+  payerName: string; // Name of the person who paid
+  splitBetween: string[]; // List of names sharing this expense
   eventId?: string;
   createdAt?: any;
   updatedAt?: any;
