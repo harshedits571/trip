@@ -98,15 +98,17 @@ export default function TripCalendar({ events }: TripCalendarProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-2 sm:gap-4 mb-2">
-        {weekDays.map(day => (
-          <div key={day} className="text-center font-black text-[10px] sm:text-xs uppercase text-slate-400 tracking-widest py-2">
-            {day}
+      <div className="overflow-x-auto no-scrollbar -mx-4 sm:mx-0 px-4 sm:px-0">
+        <div className="min-w-[600px] sm:min-w-0">
+          <div className="grid grid-cols-7 gap-2 sm:gap-4 mb-2">
+            {weekDays.map(day => (
+              <div key={day} className="text-center font-black text-[10px] sm:text-xs uppercase text-slate-400 tracking-widest py-2">
+                {day}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <div className="grid grid-cols-7 gap-2 sm:gap-4">
+          <div className="grid grid-cols-7 gap-2 sm:gap-4">
         {days.map((day, idx) => {
           const dayEvents = getEventsForDate(day);
           const isCurrentMonth = isSameMonth(day, monthStart);
@@ -149,6 +151,8 @@ export default function TripCalendar({ events }: TripCalendarProps) {
             </div>
           );
         })}
+          </div>
+        </div>
       </div>
     </div>
   );

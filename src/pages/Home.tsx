@@ -199,13 +199,13 @@ export default function Home() {
 
           <div>
             {user ? (
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-bold text-slate-500 hidden sm:inline border-2 border-slate-200 bg-white px-3 py-1.5 rounded-full">{user.email}</span>
+              <div className="flex items-center gap-2 sm:gap-4">
+                <span className="text-[10px] sm:text-xs font-bold text-slate-500 hidden md:inline border-2 border-slate-200 bg-white px-3 py-1.5 rounded-full">{user.email}</span>
                 <button 
                   onClick={signOut}
-                  className="bg-white border-2 border-slate-200 text-slate-600 hover:text-slate-900 px-4 py-2 rounded-full text-xs font-black uppercase flex items-center gap-2 transition-colors hover:border-slate-300 shadow-sm"
+                  className="bg-white border-2 border-slate-200 text-slate-600 hover:text-slate-900 px-3 sm:px-4 py-2 rounded-full text-[10px] sm:text-xs font-black uppercase flex items-center gap-2 transition-colors hover:border-slate-300 shadow-sm whitespace-nowrap"
                 >
-                  <LogOut className="w-4 h-4" /> Sign out
+                  <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Sign out</span><span className="sm:hidden">Logout</span>
                 </button>
               </div>
             ) : (
@@ -260,33 +260,35 @@ export default function Home() {
                 )}
               </div>
 
-              <div className="flex bg-indigo-900/30 p-1.5 rounded-full border border-indigo-500/30 w-fit backdrop-blur-md shadow-inner">
-                <button 
-                  onClick={() => setViewMode('timeline')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black uppercase transition-all ${viewMode === 'timeline' ? 'bg-white text-indigo-900 shadow-md transform scale-105' : 'text-indigo-200 hover:text-white hover:bg-white/10'}`}
-                >
-                  <List className="w-4 h-4" /> Timeline
-                </button>
-                <button 
-                  onClick={() => setViewMode('calendar')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black uppercase transition-all ${viewMode === 'calendar' ? 'bg-white text-indigo-900 shadow-md transform scale-105' : 'text-indigo-200 hover:text-white hover:bg-white/10'}`}
-                >
-                  <Calendar className="w-4 h-4" /> Calendar
-                </button>
-                <button 
-                  onClick={() => setViewMode('expenses')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black uppercase transition-all ${viewMode === 'expenses' ? 'bg-white text-indigo-900 shadow-md transform scale-105' : 'text-indigo-200 hover:text-white hover:bg-white/10'}`}
-                >
-                  <DollarSign className="w-4 h-4" /> Expenses
-                </button>
-                {!tripHasStarted && (
+              <div className="flex bg-indigo-900/30 p-1 rounded-full border border-indigo-500/30 w-full sm:w-fit backdrop-blur-md shadow-inner overflow-x-auto no-scrollbar">
+                <div className="flex min-w-max p-0.5">
                   <button 
-                    onClick={() => setViewMode('packing')}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black uppercase transition-all ${viewMode === 'packing' ? 'bg-white text-indigo-900 shadow-md transform scale-105' : 'text-indigo-200 hover:text-white hover:bg-white/10'}`}
+                    onClick={() => setViewMode('timeline')}
+                    className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black uppercase transition-all whitespace-nowrap ${viewMode === 'timeline' ? 'bg-white text-indigo-900 shadow-md' : 'text-indigo-200 hover:text-white hover:bg-white/10'}`}
                   >
-                    <Package className="w-4 h-4" /> Packing
+                    <List className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Timeline
                   </button>
-                )}
+                  <button 
+                    onClick={() => setViewMode('calendar')}
+                    className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black uppercase transition-all whitespace-nowrap ${viewMode === 'calendar' ? 'bg-white text-indigo-900 shadow-md' : 'text-indigo-200 hover:text-white hover:bg-white/10'}`}
+                  >
+                    <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Calendar
+                  </button>
+                  <button 
+                    onClick={() => setViewMode('expenses')}
+                    className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black uppercase transition-all whitespace-nowrap ${viewMode === 'expenses' ? 'bg-white text-indigo-900 shadow-md' : 'text-indigo-200 hover:text-white hover:bg-white/10'}`}
+                  >
+                    <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Expenses
+                  </button>
+                  {!tripHasStarted && (
+                    <button 
+                      onClick={() => setViewMode('packing')}
+                      className={`flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[10px] sm:text-xs font-black uppercase transition-all whitespace-nowrap ${viewMode === 'packing' ? 'bg-white text-indigo-900 shadow-md' : 'text-indigo-200 hover:text-white hover:bg-white/10'}`}
+                    >
+                      <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Packing
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

@@ -191,13 +191,13 @@ export default function TripExpenses({ tripId, isManager, expenses, setExpenses 
             const colors = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS.other;
 
             return (
-              <div key={expense.id} className="flex items-center justify-between p-4 rounded-2xl border-2 border-slate-100 hover:border-slate-200 bg-white transition-all group">
-                <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-xl shrink-0 ${colors}`}>
-                    <Icon className="w-5 h-5" />
+              <div key={expense.id} className="flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 border-slate-100 hover:border-slate-200 bg-white transition-all group">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                  <div className={`p-2.5 sm:p-3 rounded-xl shrink-0 ${colors}`}>
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-                  <div>
-                    <div className="font-black text-slate-800 tracking-tight leading-tight mb-1">{expense.title}</div>
+                  <div className="min-w-0">
+                    <div className="font-black text-slate-800 tracking-tight leading-tight mb-0.5 sm:mb-1 truncate">{expense.title}</div>
                     <div className="flex gap-2 items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                        <span>{format(parseISO(expense.date), 'MMM do')}</span>
                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>

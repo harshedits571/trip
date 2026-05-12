@@ -106,14 +106,14 @@ export default function PackingList({ tripId, isManager }: PackingListProps) {
       )}
 
       <form onSubmit={handleAdd} className="mb-8 flex flex-col gap-3">
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           <input
             value={newItemName}
             onChange={(e) => setNewItemName(e.target.value)}
-            placeholder="Add an item to pack..."
+            placeholder="Add item..."
             className="flex-1 bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-bold focus:outline-none focus:border-amber-400 transition-colors"
           />
-          <button type="submit" className="bg-amber-500 text-white p-3 rounded-xl hover:bg-amber-600 transition-colors">
+          <button type="submit" className="bg-amber-500 text-white p-3 rounded-xl hover:bg-amber-600 transition-colors shrink-0">
             <Plus className="w-5 h-5" />
           </button>
         </div>
@@ -141,14 +141,14 @@ export default function PackingList({ tripId, isManager }: PackingListProps) {
             <div 
               key={item.id} 
               onClick={() => handleToggle(item)}
-              className={`flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all group ${item.isPacked ? 'bg-slate-50 border-slate-100' : 'bg-white border-slate-200 hover:border-amber-300'}`}
+              className={`flex items-center justify-between p-3 sm:p-4 rounded-2xl border-2 cursor-pointer transition-all group ${item.isPacked ? 'bg-slate-50 border-slate-100' : 'bg-white border-slate-200 hover:border-amber-300'}`}
             >
-              <div className="flex items-center gap-4">
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 transition-colors ${item.isPacked ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 text-transparent'}`}>
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center border-2 transition-colors shrink-0 ${item.isPacked ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 text-transparent'}`}>
                   <Check className="w-4 h-4" />
                 </div>
-                <div className="flex flex-col">
-                  <span className={`font-bold text-sm ${item.isPacked ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
+                <div className="flex flex-col min-w-0">
+                  <span className={`font-bold text-sm truncate ${item.isPacked ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
                     {item.name}
                   </span>
                   <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 mt-0.5">
